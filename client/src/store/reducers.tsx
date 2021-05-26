@@ -1,11 +1,12 @@
 import { globalStore } from "./store";
-import { SELECT_USERNAME } from "./types";
+import { SELECT_USERNAME, SUBMIT_USERNAME } from "./types";
 
 export const setUsernameReducer = (state = globalStore, action: any) => {
-  console.log(state, "redux state here");
   switch (action.type) {
-    case SELECT_USERNAME:
-      return { ...state, username: action.payload };
+    case SELECT_USERNAME: //changes username value
+      return { ...state, username: action.payload, usernameSelected: false };
+    case SUBMIT_USERNAME: //after submitting username
+      return { ...state, usernameSelected: true };
     default:
       return state;
   }

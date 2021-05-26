@@ -1,15 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import App from './App';
+import App from "./App";
 import { Provider } from "react-redux";
-import { combineReducers, createStore } from "redux";
+import { applyMiddleware, combineReducers, createStore } from "redux";
 import reportWebVitals from "./reportWebVitals";
 import { setUsernameReducer } from "./store/reducers";
+import thunk from "redux-thunk";
 
 // redux
-let rootReducer = combineReducers(setUsernameReducer); // combining all the reducers here
-let store = createStore(rootReducer); // creating a store for the (updated) reducers
+let rootReducer = combineReducers({ setUsernameReducer }); // combining all the reducers here
+let store = createStore(rootReducer, applyMiddleware(thunk)); // creating a store for the (updated) reducers
 
 ReactDOM.render(
   <Provider store={store}>
