@@ -1,3 +1,4 @@
+import socket from "../socket";
 import { SELECT_USERNAME, SUBMIT_USERNAME } from "./types";
 
 // set the username & store it in global store
@@ -9,12 +10,6 @@ export const setUsername = (event: React.FormEvent<HTMLInputElement>) => {
     type: SELECT_USERNAME,
     payload: eventTarget.value,
   };
-
-  // return;
 };
 
-// // toggling the state if username is selected
-// export const submitUsername = (event: React.FormEvent) => {
-//   event.preventDefault(); // prevents reloading of page onSubmit & onClick
-//   return { type: SUBMIT_USERNAME };
-// };
+

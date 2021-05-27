@@ -1,5 +1,10 @@
 import { globalStore } from "./store";
-import { SELECT_USERNAME, SUBMIT_USERNAME } from "./types";
+import {
+  AUTH_ERROR_SOCKET,
+  CONNECTED_USERS,
+  SELECT_USERNAME,
+  SUBMIT_USERNAME,
+} from "./types";
 
 export const setUsernameReducer = (state = globalStore, action: any) => {
   switch (action.type) {
@@ -7,6 +12,17 @@ export const setUsernameReducer = (state = globalStore, action: any) => {
       return { ...state, username: action.payload, usernameSelected: false };
     case SUBMIT_USERNAME: //after submitting username
       return { ...state, usernameSelected: true };
+    case AUTH_ERROR_SOCKET: //handling socket.io connection error
+      return { ...state, username: null, usernameSelected: false };
+    default:
+      return state;
+  }
+};
+
+export const connectedUsersReducer = (state = globalStore, action: any) => {
+  switch (action.type) {
+    case CONNECTED_USERS:
+      return { ...state, usersList: action.payload };
     default:
       return state;
   }

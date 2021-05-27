@@ -6,6 +6,7 @@ type IGlobalStore = {
   connectedUsers?: null | string;
   searchedUser?: null | string;
   username?: null | string;
+  usersList?: any;
 };
 
 export const globalStore: IGlobalStore = {
@@ -13,4 +14,5 @@ export const globalStore: IGlobalStore = {
   connectedUsers: null,
   searchedUser: null,
   username: null,
+  usersList: [],
 };

@@ -11,7 +11,7 @@ const MessagesPanel = () => {
     },
     {
       sender: "8989",
-      content: "The M1 chip one 0_0 ?",
+      content: "The M1 chip one o_o ?",
       receiver: "2121",
     },
     {
