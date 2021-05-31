@@ -7,8 +7,10 @@ import SendMessage from "../components/SendMessage";
 import socket from "../socket";
 import { AUTH_ERROR_SOCKET } from "../store/types";
 
-const Chat = () => {
+const Chat = (props: any) => {
+  const { connectedUsersList } = props;
   const dispatch = useDispatch();
+  console.log(connectedUsersList, "cul")
 
   useEffect(() => {
     // if connection error occurs, return to Auth page
@@ -22,10 +24,10 @@ const Chat = () => {
     <div className="flex flex-row">
       <div className="flex flex-col pl-8 pt-8 w-2/5">
         <SearchConnectedUsers />
-        <RenderConnectedUsers />
+        <RenderConnectedUsers connectedUsersList={connectedUsersList} />
       </div>
       <div className="flex flex-col w-full p-8 h-screen ">
-        <MessagesPanel />
+        <MessagesPanel connectedUsersList={connectedUsersList} />
         <SendMessage />
       </div>
     </div>

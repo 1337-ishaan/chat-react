@@ -3,16 +3,16 @@
 // type declaration for the globalStore
 type IGlobalStore = {
   usernameSelected?: null | boolean;
-  connectedUsers?: null | string;
   searchedUser?: null | string;
   username?: null | string;
   usersList?: any;
+  selectedUserToChat?: null | Object;
 };
 
 export const globalStore: IGlobalStore = {
   usernameSelected: null,
-  connectedUsers: null,
   searchedUser: null,
   username: null,
-  usersList: [],
+  usersList: null,
+  selectedUserToChat: null
 };

@@ -1,5 +1,5 @@
 import socket from "../socket";
-import { SELECT_USERNAME, SUBMIT_USERNAME } from "./types";
+import { CONNECTED_USERS, SELECT_USERNAME, SUBMIT_USERNAME } from "./types";
 
 // set the username & store it in global store
 export const setUsername = (event: React.FormEvent<HTMLInputElement>) => {
@@ -11,5 +11,4 @@ export const setUsername = (event: React.FormEvent<HTMLInputElement>) => {
     payload: eventTarget.value,
   };
 };
-
 
