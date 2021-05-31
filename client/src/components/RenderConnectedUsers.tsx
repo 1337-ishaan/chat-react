@@ -4,13 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import socket from "../socket";
 import { CONNECTED_USERS, SELECT_USER } from "../store/types";
 
-const RenderConnectedUsers = ({connectedUsersList}: any) => {
-  
+const RenderConnectedUsers = ({ connectedUsersList }: any) => {
   // const [connectedUsersList, setConnectedUsersList]: any = useState([]);
   const dispatch = useDispatch();
   const { usersList } = useSelector((state: any) => state.setUsernameReducer);
-  
-  console.log(connectedUsersList, "userslist")
+
+  console.log(connectedUsersList, "userslist");
   // const initReactiveProperties = (user: any) => {
   //   //TODO: change 'any' to customized interface
   //   user.connected = true;
@@ -46,6 +45,7 @@ const RenderConnectedUsers = ({connectedUsersList}: any) => {
   //   storeNewUser();
   // }, [usersList]);
 
+  console.log(connectedUsersList, "connectedUsersList");
   return (
     <div className="pl-5">
       <div className="text-4xl my-6 font-extrabold tracking-widest">USERS</div>
@@ -57,7 +57,7 @@ const RenderConnectedUsers = ({connectedUsersList}: any) => {
               key={i}
               onClick={() => dispatch({ type: SELECT_USER, payload: user })}
             >
-              {user.username}
+              {user.username} - {user.connected ? "Online": "Offline"}
             </div>
           ))}
       </div>

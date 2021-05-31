@@ -1,3 +1,5 @@
+import { Socket } from "dgram";
+
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
@@ -41,6 +43,29 @@ io.on("connection", (socket: any) => {
   socket.broadcast.emit("user connected", {
     userID: socket.id,
     username: socket.username,
+  });
+});
+
+// implementing private messaging
+io.on("connection", (socket: any) => {
+  socket.on("private message", ({ content, to }: any) => {
+    socket.to(to).emit("private message", {
+      content,
+      from: socket.id,
+    });
+  });
+});
+
+var allClients: any = [];
+io.sockets.on("connection", function (socket: any) {
+  allClients.push(socket);
+
+  socket.on("disconnect", function () {
+    console.log("Got disconnect!");
+    var i = allClients.indexOf(socket);
+    allClients.splice(i, 1);
+    console.log(allClients);
+    // socket.emit("disconnect", allClients);
   });
 });
 

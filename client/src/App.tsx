@@ -1,3 +1,4 @@
+import { connected } from "process";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./App.css";
@@ -19,6 +20,17 @@ const App = () => {
     user.messages = [];
     user.hasNewMessages = false;
     setConnectedUsersList((prevUsers: any) => [...prevUsers, user]); //setting the connected users in state
+  };
+
+  const isUserConnected = () => {
+    socket.on("disconnect", () => {
+      connectedUsersList.forEach((user: any) => {
+        console.log(connectedUsersList, "user in disconnection");
+        if (user.self) {
+          user.connected = false;
+        }
+      });
+    });
   };
   // storing connected users
   const setConnectedUsers = () => {
@@ -46,8 +58,11 @@ const App = () => {
   useEffect(() => {
     setConnectedUsers();
     storeNewUser();
-  }, [usersList]);
+  }, []);
 
+  useEffect(() => {
+    isUserConnected();
+  });
   return (
     <>
       {usernameSelected ? (
