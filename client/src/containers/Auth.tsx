@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setUsername } from "../store/actions";
 import { SUBMIT_USERNAME } from "../store/types";
@@ -17,6 +17,19 @@ const Auth = () => {
     socket.connect();
     return;
   };
+
+  const checkIfUserPersists = () => {
+    const sessionID = localStorage.getItem("sessionID");
+    if (sessionID) {
+      dispatch({ type: SUBMIT_USERNAME });
+      socket.auth = { sessionID };
+      socket.connect();
+    }
+  };
+
+  useEffect(() => {
+    checkIfUserPersists();
+  }, []);
 
   return (
     <div className="w-screen h-screen flex justify-center items-center bg-gray-100">

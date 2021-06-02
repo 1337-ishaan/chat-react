@@ -10,7 +10,7 @@ import {
 export const setUsernameReducer = (state = globalStore, action: any) => {
   switch (action.type) {
     case SELECT_USERNAME: //changes username value
-      return { ...state, username: action.payload, usernameSelected: false };
+      return { ...state, username: action.payload };
     case SUBMIT_USERNAME: //after submitting username
       return { ...state, usernameSelected: true };
     case AUTH_ERROR_SOCKET: //handling socket.io connection error

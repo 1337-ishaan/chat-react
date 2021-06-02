@@ -10,7 +10,6 @@ import { AUTH_ERROR_SOCKET } from "../store/types";
 const Chat = (props: any) => {
   const { connectedUsersList } = props;
   const dispatch = useDispatch();
-  console.log(connectedUsersList, "cul")
 
   useEffect(() => {
     // if connection error occurs, return to Auth page
@@ -19,6 +18,7 @@ const Chat = (props: any) => {
         dispatch({ type: AUTH_ERROR_SOCKET });
     });
   }, []);
+
 
   return (
     <div className="flex flex-row">

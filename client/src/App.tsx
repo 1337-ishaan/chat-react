@@ -1,11 +1,12 @@
 import { connected } from "process";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Socket } from "socket.io-client";
+import { updateYield } from "typescript";
 import "./App.css";
 import Auth from "./containers/Auth";
 import Chat from "./containers/Chat";
 import socket from "./socket";
-import { CONNECTED_USERS, SELECT_USER } from "./store/types";
 
 // TODO: need to refactor code for usersList
 const App = () => {
@@ -21,6 +22,15 @@ const App = () => {
     user.hasNewMessages = false;
     setConnectedUsersList((prevUsers: any) => [...prevUsers, user]); //setting the connected users in state
   };
+
+  let data =
+    connectedUsersList &&
+    connectedUsersList.filter(({ userID }: any, i: any) => {
+      return (
+        connectedUsersList.findIndex((item: any) => item.userID === userID) ===
+        i
+      );
+    });
 
   const isUserConnected = () => {
     socket.on("disconnect", () => {
@@ -55,18 +65,35 @@ const App = () => {
     });
   };
 
+  interface ISocket extends Socket {
+    userID?: any;
+    sessionID?: any;
+    username?: string;
+  }
+
+  // persisting the user
+  const persistUser = (socket: ISocket) => {
+    socket.on("session", ({ sessionID, userID, username }) => {
+      socket.auth = { sessionID, username }; //storing the sessionID and username in socket
+      localStorage.setItem("sessionID", sessionID); //store the sessionID in localStorage
+      socket.userID = userID; // also store the userID in socket
+    });
+  };
+
   useEffect(() => {
     setConnectedUsers();
     storeNewUser();
+    persistUser(socket);
   }, []);
 
   useEffect(() => {
     isUserConnected();
   });
+  console.log(data,"data")
   return (
     <>
       {usernameSelected ? (
-        <Chat connectedUsersList={connectedUsersList} />
+        <Chat connectedUsersList={data} />
       ) : (
         <Auth />
       )}

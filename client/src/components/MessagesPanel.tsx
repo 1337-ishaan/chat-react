@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { connect } from "tls";
 import socket from "../socket";
 import { SELECT_USER } from "../store/types";
 
@@ -10,17 +11,11 @@ const MessagesPanel = ({ connectedUsersList }: any) => {
     (state: any) => state.setUsernameReducer
   );
 
-  console.log(selectedUserToChat, "selected user to chat");
-
-  // !User's list not updating frequently
   const getUserMessages = ({ content, from }: any) => {
     var user;
-
     for (let i = 0; i < connectedUsersList.length; i++) {
       user = connectedUsersList[i];
-      console.log(user, "user");
     }
-
     if (user && user.userID === from) {
       console.log("user from");
       user.messages.push({
@@ -40,7 +35,6 @@ const MessagesPanel = ({ connectedUsersList }: any) => {
   }, [connectedUsersList]);
 
   //check the logic for rendering alternate messages perfectly
-  console.log(selectedUserToChat, "selected");
   return (
     <div className="flex flex-col h-screen justify-end ">
       {" "}

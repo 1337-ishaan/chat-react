@@ -1,73 +1,109 @@
-import { Socket } from "dgram";
-
-const express = require("express");
-const cors = require("cors");
-const http = require("http");
-
-const app = express();
-app.use(cors);
-
-require("dotenv").config(); // for storing confidential information to hide
-
-let PORT = process.env.REACT_APP_PORT || 3010;
-
-const httpServer = require("http").createServer(app);
+const httpServer = require("http").createServer();
 const io = require("socket.io")(httpServer, {
   cors: {
     origin: "http://143.110.246.44:3000",
   },
 });
 
-// check the username and allow the connection
+const randomId = () => require("crypto").randomBytes(8).toString("hex");
+let sessions = new Map();
+
+const findSession = (id: any) => {
+  return sessions.get(id);
+};
+
+const saveSession = (id: any, session: any) => {
+  sessions.set(id, session);
+};
+
+const findAllSessions = () => {
+  return [...sessions.values()];
+};
+
 io.use((socket: any, next: any) => {
-  const username = socket.handshake.auth.username;
-  if (!username) return next(new Error("Invalid Username")); // if no username then return Error
-  socket.username = username; // set username to socket JSON
-  next(); // IMPORTANT: passes to the next middleware
-});
-
-// listing and sending the connected users to the client
-io.on("connection", (socket: any) => {
-  const users = [];
-  for (let [id, socket] of io.of("/").sockets) {
-    users.push({
-      userID: id,
-      username: socket.handshake.auth.username,
-    });
+  const sessionID = socket.handshake.auth.sessionID;
+  if (sessionID) {
+    const session = findSession(sessionID);
+    if (session) {
+      socket.sessionID = sessionID;
+      socket.userID = session.userID;
+      socket.username = session.username;
+      return next();
+    }
   }
-  socket.emit("users", users);
+  const username = socket.handshake.auth.username;
+  if (!username) {
+    return next(new Error("invalid username"));
+  }
+  socket.sessionID = randomId();
+  socket.userID = randomId();
+  socket.username = username;
+  next();
 });
 
-// notify the other connected users if a new users connects
 io.on("connection", (socket: any) => {
-  socket.broadcast.emit("user connected", {
-    userID: socket.id,
+  // persist session
+  saveSession(socket.sessionID, {
+    userID: socket.userID,
     username: socket.username,
+    connected: true,
   });
-});
 
-// implementing private messaging
-io.on("connection", (socket: any) => {
-  socket.on("private message", ({ content, to }: any) => {
-    socket.to(to).emit("private message", {
-      content,
-      from: socket.id,
+  // emit session details
+  socket.emit("session", {
+    sessionID: socket.sessionID,
+    userID: socket.userID,
+  });
+
+  // join the "userID" room
+  socket.join(socket.userID);
+
+  // fetch existing users
+  const users: any = [];
+  findAllSessions().forEach((session: any) => {
+    users.push({
+      userID: session.userID,
+      username: session.username,
+      connected: session.connected,
     });
   });
-});
+  socket.emit("users", users);
 
-var allClients: any = [];
-io.sockets.on("connection", function (socket: any) {
-  allClients.push(socket);
+  // notify existing users
+  socket.broadcast.emit("user connected", {
+    userID: socket.userID,
+    username: socket.username,
+    connected: true,
+  });
 
-  socket.on("disconnect", function () {
-    console.log("Got disconnect!");
-    var i = allClients.indexOf(socket);
-    allClients.splice(i, 1);
-    console.log(allClients);
-    // socket.emit("disconnect", allClients);
+  // forward the private message to the right recipient (and to other tabs of the sender)
+  socket.on("private message", ({ content, to }: any) => {
+    socket.to(to).to(socket.userID).emit("private message", {
+      content,
+      from: socket.userID,
+      to,
+    });
+  });
+
+  // notify users upon disconnection
+  socket.on("disconnect", async () => {
+    const matchingSockets = await io.in(socket.userID).allSockets();
+    const isDisconnected = matchingSockets.size === 0;
+    if (isDisconnected) {
+      // notify other users
+      socket.broadcast.emit("user disconnected", socket.userID);
+      // update the connection status of the session
+      saveSession(socket.sessionID, {
+        userID: socket.userID,
+        username: socket.username,
+        connected: false,
+      });
+    }
   });
 });
 
-// starting the http server
-httpServer.listen(PORT, () => console.log(`Server started on PORT: ${PORT}`));
+const PORT = process.env.REACT_APP_PORT || 3010;
+
+httpServer.listen(PORT, () =>
+  console.log(`server listening at http://localhost:${PORT}`)
+);
