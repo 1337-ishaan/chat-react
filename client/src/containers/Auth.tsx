@@ -27,7 +27,7 @@ const Auth = () => {
     }
   };
 
-  useEffect(() => {
+  useEffect(() => { 
     checkIfUserPersists();
   }, []);
 

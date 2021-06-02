@@ -7,9 +7,7 @@ import { CONNECTED_USERS, SELECT_USER } from "../store/types";
 const RenderConnectedUsers = ({ connectedUsersList }: any) => {
   // const [connectedUsersList, setConnectedUsersList]: any = useState([]);
   const dispatch = useDispatch();
-  const { usersList } = useSelector((state: any) => state.setUsernameReducer);
 
-  console.log(connectedUsersList, "userslist");
   // const initReactiveProperties = (user: any) => {
   //   //TODO: change 'any' to customized interface
   //   user.connected = true;

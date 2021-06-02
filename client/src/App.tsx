@@ -25,9 +25,9 @@ const App = () => {
 
   let data =
     connectedUsersList &&
-    connectedUsersList.filter(({ userID }: any, i: any) => {
+    connectedUsersList.filter((user:any, i: any) => {
       return (
-        connectedUsersList.findIndex((item: any) => item.userID === userID) ===
+        connectedUsersList.findIndex((item: any) => item.userID === user.id) ===
         i
       );
     });
@@ -80,6 +80,8 @@ const App = () => {
     });
   };
 
+// !Bug: remove duplicate users on page reload
+
   useEffect(() => {
     setConnectedUsers();
     storeNewUser();
@@ -89,11 +91,11 @@ const App = () => {
   useEffect(() => {
     isUserConnected();
   });
-  console.log(data,"data")
+  console.log(data, "data");
   return (
     <>
       {usernameSelected ? (
-        <Chat connectedUsersList={data} />
+        <Chat connectedUsersList={connectedUsersList} />
       ) : (
         <Auth />
       )}
