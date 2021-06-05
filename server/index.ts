@@ -98,12 +98,14 @@ io.sockets.on("connection", (socket: any) => {
   });
 
   // forward the private message to the right recipient (and to other tabs of the sender)
-  socket.on("private message", ({ content, to }: any) => {
-    socket.to(to).to(socket.userID).emit("private message", {
+  socket.on("private message", ({ content, to }:any) => {
+    const message = {
       content,
       from: socket.userID,
       to,
-    });
+    };
+    socket.to(to).to(socket.userID).emit("private message", message);
+    saveMessage(message);
   });
 
   // notify users upon disconnection

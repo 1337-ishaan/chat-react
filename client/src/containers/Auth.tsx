@@ -3,16 +3,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUsername } from "../store/actions";
 import { SUBMIT_USERNAME } from "../store/types";
 import socket from "../socket";
+import { useSnackbar } from "react-simple-snackbar";
 
 const Auth = () => {
   const dispatch = useDispatch();
+  const snackbarOptions = {
+    position: "top-right",
+  };
+  const [openSnackbar, closeSnackbar] = useSnackbar(snackbarOptions);
   const { username, usernameSelected } = useSelector(
     (state: any) => state.setUsernameReducer
   );
 
   const submitUsername = (event: React.FormEvent) => {
     event.preventDefault(); // prevents reloading of page onSubmit & onClick
-    dispatch({ type: SUBMIT_USERNAME });
+    !username
+      ? openSnackbar("Dude, we'll need a name to address you")
+      : dispatch({ type: SUBMIT_USERNAME });
     socket.auth = { username };
     socket.connect();
     return;
@@ -27,7 +34,7 @@ const Auth = () => {
     }
   };
 
-  useEffect(() => { 
+  useEffect(() => {
     checkIfUserPersists();
   }, []);
 

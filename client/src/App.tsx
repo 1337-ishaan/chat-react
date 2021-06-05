@@ -1,5 +1,5 @@
-import { connected } from "process";
 import { useEffect, useState } from "react";
+import SnackbarProvider from "react-simple-snackbar";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 import "./App.css";
@@ -9,7 +9,7 @@ import socket from "./socket";
 
 // TODO: need to refactor code for usersList
 const App = () => {
-  const { usernameSelected, usersList } = useSelector(
+  const { usernameSelected, selectedUserToChat, usersList } = useSelector(
     (state: any) => state.setUsernameReducer
   );
   const [connectedUsersList, setConnectedUsersList]: any = useState([]);
@@ -22,15 +22,16 @@ const App = () => {
     setConnectedUsersList((prevUsers: any) => [...prevUsers, user]); //setting the connected users in state
   };
 
-  const data =
-    connectedUsersList &&
-    connectedUsersList.filter((user: any, i: any) => {
-      return (
-        connectedUsersList.findIndex((item: any) => item.userID === user.id) ===
-        i
-      );
-    });
+  // const data =
+  //   connectedUsersList &&
+  //   connectedUsersList.filter((user: any, i: any) => {
+  //     return (
+  //       connectedUsersList.findIndex((item: any) => item.userID === user.id) ===
+  //       i
+  //     );
+  //   });
 
+  console.log(connectedUsersList, "messages check list");
   const isUserConnected = () => {
     socket.on("disconnect", () => {
       connectedUsersList.forEach((user: any) => {
@@ -54,6 +55,7 @@ const App = () => {
         if (a.username < b.username) return -1;
         return a.username > b.username ? 1 : 0;
       });
+      console.log(users, "users here");
     });
   };
 
@@ -65,7 +67,6 @@ const App = () => {
       });
   };
 
-  console.log(localStorage.getItem("sessionID"), "localstorage")
   interface ISocket extends Socket {
     userID?: any;
     sessionID?: any;
@@ -76,16 +77,16 @@ const App = () => {
   const persistUser = (socket: ISocket) => {
     socket.on("session", ({ sessionID, userID, username }) => {
       socket.auth = { sessionID, username }; //storing the sessionID and username in socket
-      localStorage.setItem("sessionID", sessionID); //store the sessionID in localStorage
+      !(connectedUsersList.length > 0)
+        ? localStorage.setItem("sessionID", sessionID)
+        : localStorage.removeItem("sessionID"); //store the sessionID in localStorage
       socket.userID = userID; // also store the userID in socket
     });
   };
 
-  // !bug: remove duplicate users on page reload
   useEffect(() => {
     setConnectedUsers();
     storeNewUser();
-    console.log("check duplication");
     persistUser(socket);
   }, []);
 
@@ -94,13 +95,13 @@ const App = () => {
   });
 
   return (
-    <>
+    <SnackbarProvider>
       {usernameSelected ? (
         <Chat connectedUsersList={connectedUsersList} />
       ) : (
         <Auth />
       )}
-    </>
+    </SnackbarProvider>
   );
 };
 

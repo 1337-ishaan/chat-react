@@ -2,18 +2,22 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import socket from "../socket";
 import { SELECT_USER } from "../store/types";
+import { useSnackbar } from "react-simple-snackbar";
 
 const SendMessage = () => {
   const [messageToSend, setMessageToSend] = useState("");
+  const snackbarOptions = {
+    position: "top-right",
+  };
+  const [openSnackbar, closeSnackbar] = useSnackbar(snackbarOptions);
   const dispatch = useDispatch();
   const { selectedUserToChat } = useSelector(
     (state: any) => state.setUsernameReducer
   );
 
-  // !bug to fix, selectedUserToChat pushes the content multiple times
   const onMessage = (e: any, content: any) => {
     e.preventDefault();
-    if (selectedUserToChat) {
+    if (messageToSend && selectedUserToChat) {
       socket.emit("private message", {
         content,
         to: selectedUserToChat.userID,
@@ -24,6 +28,18 @@ const SendMessage = () => {
       });
       dispatch({ type: SELECT_USER, payload: selectedUserToChat });
       setMessageToSend("");
+    } else {
+      if (!messageToSend && selectedUserToChat) {
+        openSnackbar(
+          "Please write something, just in case if the selected user doesn't feel bad lol"
+        );
+      }
+      if (messageToSend && !selectedUserToChat) {
+        openSnackbar("Please select a user");
+      }
+      if (!messageToSend && !selectedUserToChat) {
+        openSnackbar("Please select a user");
+      }
     }
   };
 

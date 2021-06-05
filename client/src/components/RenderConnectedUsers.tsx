@@ -17,7 +17,7 @@ const RenderConnectedUsers = ({ connectedUsersList }: any) => {
               key={i}
               onClick={() => dispatch({ type: SELECT_USER, payload: user })}
             >
-              {user.username} - {user.connected ? "Online": "Offline"}
+              {user.username}
             </div>
           ))}
       </div>

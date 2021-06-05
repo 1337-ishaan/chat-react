@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import MessagesPanel from "../components/MessagesPanel";
 import RenderConnectedUsers from "../components/RenderConnectedUsers";
 import SearchConnectedUsers from "../components/SearchConnectedUsers";
@@ -11,6 +11,10 @@ const Chat = (props: any) => {
   const { connectedUsersList } = props;
   const dispatch = useDispatch();
 
+  const { selectedUserToChat } = useSelector(
+    (state: any) => state.setUsernameReducer
+  );
+
   useEffect(() => {
     // if connection error occurs, return to Auth page
     socket.on("connect_error", (err) => {
@@ -19,7 +23,6 @@ const Chat = (props: any) => {
     });
   }, []);
 
-
   return (
     <div className="flex flex-row">
       <div className="flex flex-col pl-8 pt-8 w-2/5">
@@ -27,6 +30,7 @@ const Chat = (props: any) => {
         <RenderConnectedUsers connectedUsersList={connectedUsersList} />
       </div>
       <div className="flex flex-col w-full p-8 h-screen ">
+        <div>{selectedUserToChat && selectedUserToChat.username}</div>
         <MessagesPanel connectedUsersList={connectedUsersList} />
         <SendMessage />
       </div>
