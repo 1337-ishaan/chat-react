@@ -5,7 +5,6 @@ import socket from "../socket";
 import { SELECT_USER } from "../store/types";
 
 const MessagesPanel = ({ connectedUsersList }: any) => {
-  console.log(connectedUsersList, "cul in messagepanel");
   const dispatch = useDispatch();
   const { selectedUserToChat } = useSelector(
     (state: any) => state.setUsernameReducer

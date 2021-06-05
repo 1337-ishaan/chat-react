@@ -7,7 +7,7 @@ const io = require("socket.io")(httpServer, {
 
 const randomId = () => require("crypto").randomBytes(8).toString("hex");
 let sessions = new Map();
-
+const messages: any = [];
 const findSession = (id: any) => {
   return sessions.get(id);
 };
@@ -18,6 +18,16 @@ const saveSession = (id: any, session: any) => {
 
 const findAllSessions = () => {
   return [...sessions.values()];
+};
+
+const saveMessage = (message: any) => {
+  messages.push(message);
+};
+
+const findMessageForUser = (userID: any) => {
+  return messages.filter(
+    ({ from, to }: any) => from === userID || to === userID
+  );
 };
 
 io.use((socket: any, next: any) => {
@@ -41,7 +51,7 @@ io.use((socket: any, next: any) => {
   next();
 });
 
-io.on("connection", (socket: any) => {
+io.sockets.on("connection", (socket: any) => {
   // persist session
   saveSession(socket.sessionID, {
     userID: socket.userID,
@@ -60,6 +70,16 @@ io.on("connection", (socket: any) => {
 
   // fetch existing users
   const users: any = [];
+  const messagesPerUser = new Map();
+  findMessageForUser(socket.userID).forEach((message: any) => {
+    const { from, to } = message;
+    const otherUser = socket.userID === from ? to : from;
+    if (messagesPerUser.has(otherUser)) {
+      messagesPerUser.get(otherUser).push(message);
+    } else {
+      messagesPerUser.set(otherUser, [message]);
+    }
+  });
   findAllSessions().forEach((session: any) => {
     users.push({
       userID: session.userID,
@@ -68,6 +88,7 @@ io.on("connection", (socket: any) => {
     });
   });
   socket.emit("users", users);
+  console.log(messagesPerUser, "message for user");
 
   // notify existing users
   socket.broadcast.emit("user connected", {

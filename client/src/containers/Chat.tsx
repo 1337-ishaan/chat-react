@@ -23,7 +23,7 @@ const Chat = (props: any) => {
   return (
     <div className="flex flex-row">
       <div className="flex flex-col pl-8 pt-8 w-2/5">
-        <SearchConnectedUsers />
+        {/* <SearchConnectedUsers /> */}
         <RenderConnectedUsers connectedUsersList={connectedUsersList} />
       </div>
       <div className="flex flex-col w-full p-8 h-screen ">

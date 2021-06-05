@@ -10,7 +10,7 @@ const SendMessage = () => {
     (state: any) => state.setUsernameReducer
   );
 
-  // !bug to fix, selectedUserToChat pushes the content multiple times  
+  // !bug to fix, selectedUserToChat pushes the content multiple times
   const onMessage = (e: any, content: any) => {
     e.preventDefault();
     if (selectedUserToChat) {
@@ -23,8 +23,8 @@ const SendMessage = () => {
         fromSelf: true,
       });
       dispatch({ type: SELECT_USER, payload: selectedUserToChat });
+      setMessageToSend("");
     }
-    setMessageToSend("");
   };
 
   return (

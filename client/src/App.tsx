@@ -2,7 +2,6 @@ import { connected } from "process";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
-import { updateYield } from "typescript";
 import "./App.css";
 import Auth from "./containers/Auth";
 import Chat from "./containers/Chat";
@@ -23,9 +22,9 @@ const App = () => {
     setConnectedUsersList((prevUsers: any) => [...prevUsers, user]); //setting the connected users in state
   };
 
-  let data =
+  const data =
     connectedUsersList &&
-    connectedUsersList.filter((user:any, i: any) => {
+    connectedUsersList.filter((user: any, i: any) => {
       return (
         connectedUsersList.findIndex((item: any) => item.userID === user.id) ===
         i
@@ -60,11 +59,13 @@ const App = () => {
 
   // after new user connects, store it in an array
   const storeNewUser = () => {
-    socket.on("user connected", (user) => {
-      initReactiveProperties(user);
-    });
+    !localStorage.getItem("sessionID") &&
+      socket.once("user connected", (user) => {
+        initReactiveProperties(user);
+      });
   };
 
+  console.log(localStorage.getItem("sessionID"), "localstorage")
   interface ISocket extends Socket {
     userID?: any;
     sessionID?: any;
@@ -80,18 +81,18 @@ const App = () => {
     });
   };
 
-// !Bug: remove duplicate users on page reload
-
+  // !bug: remove duplicate users on page reload
   useEffect(() => {
     setConnectedUsers();
     storeNewUser();
+    console.log("check duplication");
     persistUser(socket);
   }, []);
 
   useEffect(() => {
     isUserConnected();
   });
-  console.log(data, "data");
+
   return (
     <>
       {usernameSelected ? (
