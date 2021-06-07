@@ -24,13 +24,17 @@ const Chat = (props: any) => {
   }, []);
 
   return (
-    <div className="flex flex-row">
+    <div className="flex  flex-row">
       <div className="flex flex-col pl-8 pt-8 w-2/5">
         {/* <SearchConnectedUsers /> */}
+     
+
         <RenderConnectedUsers connectedUsersList={connectedUsersList} />
       </div>
-      <div className="flex flex-col w-full p-8 h-screen ">
-        <div>{selectedUserToChat && selectedUserToChat.username}</div>
+      <div className="flex flex-col w-full p-8 overflow-auto  h-screen ">
+        <div className="text-5xl font-bold">
+          {selectedUserToChat && selectedUserToChat.username}
+        </div>
         <MessagesPanel connectedUsersList={connectedUsersList} />
         <SendMessage />
       </div>

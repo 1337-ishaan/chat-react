@@ -7,9 +7,8 @@ import Auth from "./containers/Auth";
 import Chat from "./containers/Chat";
 import socket from "./socket";
 
-// TODO: need to refactor code for usersList
 const App = () => {
-  const { usernameSelected, selectedUserToChat, usersList } = useSelector(
+  const { usernameSelected } = useSelector(
     (state: any) => state.setUsernameReducer
   );
   const [connectedUsersList, setConnectedUsersList]: any = useState([]);
@@ -31,7 +30,6 @@ const App = () => {
   //     );
   //   });
 
-  console.log(connectedUsersList, "messages check list");
   const isUserConnected = () => {
     socket.on("disconnect", () => {
       connectedUsersList.forEach((user: any) => {
@@ -55,7 +53,6 @@ const App = () => {
         if (a.username < b.username) return -1;
         return a.username > b.username ? 1 : 0;
       });
-      console.log(users, "users here");
     });
   };
 

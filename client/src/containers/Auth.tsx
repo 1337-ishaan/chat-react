@@ -17,6 +17,7 @@ const Auth = () => {
 
   const submitUsername = (event: React.FormEvent) => {
     event.preventDefault(); // prevents reloading of page onSubmit & onClick
+
     !username
       ? openSnackbar("Dude, we'll need a name to address you")
       : dispatch({ type: SUBMIT_USERNAME });
