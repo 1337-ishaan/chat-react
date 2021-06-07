@@ -44,18 +44,19 @@ const SendMessage = () => {
   };
 
   return (
-    <form onSubmit={(e) => onMessage(e, messageToSend)} className="">
-      <div className="bg-white flex items-center rounded-full shadow-xl">
+    <form onSubmit={(e) => onMessage(e, messageToSend)} className="mt-2">
+      <div className="bg-white flex items-center bg-gray-900 text-2xl rounded-full shadow-xl">
         <input
-          className="rounded-l-full w-full py-4 px-6 text-gray-700 leading-tight focus:outline-none"
+          className="rounded-l-full w-full py-1 px-6 text-white bg-gray-900  leading-tight focus:outline-none"
           id="Message"
           type="text"
           value={messageToSend}
-          placeholder="Search"
+          autoComplete="false"
+          placeholder="Write something ..."
           onChange={(e) => setMessageToSend(e.target.value)}
         />
-        <div onClick={(e) => onMessage(e, messageToSend)} className="p-4">
-          <button className="text-3xl bg-blue-500 text-white rounded-full p-2 hover:bg-blue-400 focus:outline-none w-12 h-12 flex items-center justify-center">
+        <div onClick={(e) => onMessage(e, messageToSend)} className="px-4 py-2">
+          <button className="text-3xl bg-green-200 text-black  rounded-full p-2 hover:bg-green-400 focus:outline-none w-12 h-12 flex items-center justify-center">
             {">"}
           </button>
         </div>

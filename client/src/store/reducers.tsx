@@ -5,6 +5,7 @@ import {
   SELECT_USERNAME,
   SUBMIT_USERNAME,
   SELECT_USER,
+  LOGOUT_USER,
 } from "./types";
 
 export const setUsernameReducer = (state = globalStore, action: any) => {
@@ -19,6 +20,9 @@ export const setUsernameReducer = (state = globalStore, action: any) => {
       return { ...state, usersList: [action.payload] };
     case SELECT_USER:
       return { ...state, selectedUserToChat: action.payload };
+    case LOGOUT_USER:
+      return { ...state, usernameSelected: false };
+
     default:
       return state;
   }

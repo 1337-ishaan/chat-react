@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setUsername } from "../store/actions";
-import { SUBMIT_USERNAME } from "../store/types";
+import { CONNECTED_USERS, SUBMIT_USERNAME } from "../store/types";
 import socket from "../socket";
 import { useSnackbar } from "react-simple-snackbar";
+import { connected } from "process";
 
 const Auth = () => {
   const dispatch = useDispatch();
@@ -11,13 +12,12 @@ const Auth = () => {
     position: "top-right",
   };
   const [openSnackbar, closeSnackbar] = useSnackbar(snackbarOptions);
-  const { username, usernameSelected } = useSelector(
+  const { username, usernameSelected, usersList } = useSelector(
     (state: any) => state.setUsernameReducer
   );
 
   const submitUsername = (event: React.FormEvent) => {
     event.preventDefault(); // prevents reloading of page onSubmit & onClick
-
     !username
       ? openSnackbar("Dude, we'll need a name to address you")
       : dispatch({ type: SUBMIT_USERNAME });
@@ -40,7 +40,7 @@ const Auth = () => {
   }, []);
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center bg-gray-100">
+    <div className="w-screen  h-screen flex justify-center items-center bg-gray-800">
       <form
         onSubmit={(e) => submitUsername(e)}
         className="p-10 bg-white rounded flex justify-center items-center flex-col shadow-md"
@@ -57,10 +57,9 @@ const Auth = () => {
           placeholder="eg: '1337-xyz' ..."
           required
         />
-        {usernameSelected && <div>Username is selected </div>}
         <button
           onClick={(e) => submitUsername(e)}
-          className="bg-purple-600 hover:bg-purple-900 text-white font-bold p-2 rounded w-80"
+          className="bg-purple-900 hover:bg-purple-900 text-white font-bold p-2 rounded w-80"
           id="login"
           type="submit"
         >

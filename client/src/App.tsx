@@ -12,7 +12,6 @@ const App = () => {
     (state: any) => state.setUsernameReducer
   );
   const [connectedUsersList, setConnectedUsersList]: any = useState([]);
-  const dispatch = useDispatch();
   const initReactiveProperties = (user: any) => {
     //TODO: change 'any' to customized interface
     user.connected = true;
@@ -21,37 +20,29 @@ const App = () => {
     setConnectedUsersList((prevUsers: any) => [...prevUsers, user]); //setting the connected users in state
   };
 
-  // const data =
-  //   connectedUsersList &&
-  //   connectedUsersList.filter((user: any, i: any) => {
-  //     return (
-  //       connectedUsersList.findIndex((item: any) => item.userID === user.id) ===
-  //       i
-  //     );
-  //   });
-
+  console.log(connectedUsersList, "cuulist");
   const isUserConnected = () => {
     socket.on("disconnect", () => {
       connectedUsersList.forEach((user: any) => {
-        console.log(connectedUsersList, "user in disconnection");
         if (user.self) {
           user.connected = false;
         }
       });
     });
   };
+  console.log(socket, "socket");
   // storing connected users
   const setConnectedUsers = () => {
     socket.on("users", (users) => {
-      users.forEach((user: any) => {
-        user.self = user.userID === socket.id; // if the user is the authenticated user
-        initReactiveProperties(user);
-      });
       users = users.sort((a: any, b: any) => {
         if (a.self) return -1;
         if (b.self) return 1;
         if (a.username < b.username) return -1;
         return a.username > b.username ? 1 : 0;
+      });
+      users.forEach((user: any) => {
+        user.self = user.userID === socket.id; // if the user is the authenticated user
+        initReactiveProperties(user);
       });
     });
   };
@@ -89,6 +80,15 @@ const App = () => {
 
   useEffect(() => {
     isUserConnected();
+    // cleaning up equivalent to componentDidUnmount
+    () => (
+      socket.off("connect"),
+      socket.off("disconnect"),
+      socket.off("users"),
+      socket.off("user connected"),
+      socket.off("user disconnected"),
+      socket.off("private message")
+    );
   });
 
   return (

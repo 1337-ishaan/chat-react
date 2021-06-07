@@ -7,3 +7,7 @@ body {
     Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
+::-webkit-scrollbar {
+  width: 0px !important;
+  /* background: yellow !important; make scrollbar transparent */
+}

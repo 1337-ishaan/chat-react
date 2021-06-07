@@ -44,18 +44,18 @@ const MessagesPanel = ({ connectedUsersList }: any) => {
 
   //check the logic for rendering alternate messages perfectly
   return (
-    <div className="flex h-screen mt-2 flex-nowrap overflow-auto  flex-col  ">
+    <div className="flex  h-screen mt-2 text-2xl flex-nowrap overflow-auto  flex-col  ">
       {" "}
-      <div className="mt-auto flex flex-col">
+      <div className="mt-auto flex  flex-col">
         {selectedUserToChat &&
           selectedUserToChat.messages &&
           selectedUserToChat.messages.map((message: any, i: number) => (
             <div key={i}>
               <span
-                className={`${
+                className={`  ${
                   selectedUserToChat.messages[i].fromSelf
-                    ? "px-4 py-2 my-1 rounded-t-lg rounded-bl-lg inline-block bg-blue-600 text-white float-right"
-                    : "px-4 my-1 py-2 rounded-r-lg rounded-bl-lg inline-block bg-gray-300 text-black"
+                    ? "px-4 py-2 my-1 rounded-t-lg  rounded-bl-lg inline-block bg-gray-800 text-white float-right"
+                    : "px-4 my-1 py-2 rounded-r-lg  rounded-bl-lg inline-block bg-gray-200 text-black"
                 }`}
               >
                 {message.content}{" "}

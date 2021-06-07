@@ -4,5 +4,7 @@ export const AUTH_ERROR_SOCKET = "AUTH_ERROR_SOCKET";
 
 export const CONNECTED_USERS = "CONNECTED_USERS";
 export const SELECT_USER = "SELECT_USER";
+export const LOGOUT_USER = "LOGOUT_USER";
+
 
 

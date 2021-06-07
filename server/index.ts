@@ -5,7 +5,6 @@ const io = require("socket.io")(httpServer, {
   },
 });
 
-const randomId = () => require("crypto").randomBytes(8).toString("hex");
 let sessions = new Map();
 const messages: any = [];
 const findSession = (id: any) => {
@@ -45,8 +44,8 @@ io.use((socket: any, next: any) => {
   if (!username) {
     return next(new Error("invalid username"));
   }
-  socket.sessionID = randomId();
-  socket.userID = randomId();
+  socket.sessionID = socket.id;
+  socket.userID = socket.id;
   socket.username = username;
   next();
 });
@@ -88,7 +87,6 @@ io.sockets.on("connection", (socket: any) => {
     });
   });
   socket.emit("users", users);
-  console.log(messagesPerUser, "message for user");
 
   // notify existing users
   socket.broadcast.emit("user connected", {
@@ -98,7 +96,7 @@ io.sockets.on("connection", (socket: any) => {
   });
 
   // forward the private message to the right recipient (and to other tabs of the sender)
-  socket.on("private message", ({ content, to }:any) => {
+  socket.on("private message", ({ content, to }: any) => {
     const message = {
       content,
       from: socket.userID,
@@ -116,6 +114,9 @@ io.sockets.on("connection", (socket: any) => {
       // notify other users
       socket.broadcast.emit("user disconnected", socket.userID);
       // update the connection status of the session
+
+      var i = users.indexOf(socket);
+      users.splice(i, 1);
       saveSession(socket.sessionID, {
         userID: socket.userID,
         username: socket.username,
