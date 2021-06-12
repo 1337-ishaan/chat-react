@@ -51,12 +51,12 @@ const SendMessage = () => {
           id="Message"
           type="text"
           value={messageToSend}
-          autoComplete="false"
+          autoComplete="off"
           placeholder="Write something ..."
           onChange={(e) => setMessageToSend(e.target.value)}
         />
         <div onClick={(e) => onMessage(e, messageToSend)} className="px-4 py-2">
-          <button className="text-3xl bg-green-200 text-black  rounded-full p-2 hover:bg-green-400 focus:outline-none w-12 h-12 flex items-center justify-center">
+          <button className="text-3xl bg-purple-300 text-black  rounded-full p-2 hover:bg-purple-400 focus:outline-none w-12 h-12 flex items-center justify-center">
             {">"}
           </button>
         </div>

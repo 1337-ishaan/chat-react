@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MessagesPanel from "../components/MessagesPanel";
 import RenderConnectedUsers from "../components/RenderConnectedUsers";
-import SearchConnectedUsers from "../components/SearchConnectedUsers";
 import SendMessage from "../components/SendMessage";
 import socket from "../socket";
 import { AUTH_ERROR_SOCKET, LOGOUT_USER } from "../store/types";
@@ -15,7 +14,6 @@ const Chat = (props: any) => {
     (state: any) => state.setUsernameReducer
   );
 
-  console.log(usersList, "userslist ");
   // logout function
   const logoutFunction = () => {
     localStorage.removeItem("sessionID");
@@ -45,7 +43,7 @@ const Chat = (props: any) => {
           </div>
           <div
             onClick={() => logoutFunction()}
-            className="text-2xl bg-red-400 hover:bg-red-500 text-white font-bold py-2 px-4 border-b-4  border-red-700 hover:border-red-500 rounded-lg cursor-pointer font-bold"
+            className="text-2xl transform duration-500  hover:-translate-y-1 bg-red-400 hover:bg-red-500 text-white font-bold py-2 px-4 border-b-4  border-red-700 hover:border-red-500 rounded-lg cursor-pointer font-bold"
           >
             Logout
           </div>

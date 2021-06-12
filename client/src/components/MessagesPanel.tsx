@@ -55,7 +55,7 @@ const MessagesPanel = ({ connectedUsersList }: any) => {
                 className={`  ${
                   selectedUserToChat.messages[i].fromSelf
                     ? "px-4 py-2 my-1 rounded-t-lg  rounded-bl-lg inline-block bg-gray-800 text-white float-right"
-                    : "px-4 my-1 py-2 rounded-r-lg  rounded-bl-lg inline-block bg-gray-200 text-black"
+                    : "px-4 my-1 py-2 rounded-r-lg  rounded-bl-lg inline-block bg-gray-900 text-white"
                 }`}
               >
                 {message.content}{" "}

@@ -5,6 +5,7 @@ const io = require("socket.io")(httpServer, {
   },
 });
 
+const randomId = () => require("crypto").randomBytes(8).toString("hex");
 let sessions = new Map();
 const messages: any = [];
 const findSession = (id: any) => {
@@ -97,13 +98,11 @@ io.sockets.on("connection", (socket: any) => {
 
   // forward the private message to the right recipient (and to other tabs of the sender)
   socket.on("private message", ({ content, to }: any) => {
-    const message = {
+    socket.to(to).to(socket.userID).emit("private message", {
       content,
       from: socket.userID,
       to,
-    };
-    socket.to(to).to(socket.userID).emit("private message", message);
-    saveMessage(message);
+    });
   });
 
   // notify users upon disconnection
@@ -114,9 +113,6 @@ io.sockets.on("connection", (socket: any) => {
       // notify other users
       socket.broadcast.emit("user disconnected", socket.userID);
       // update the connection status of the session
-
-      var i = users.indexOf(socket);
-      users.splice(i, 1);
       saveSession(socket.sessionID, {
         userID: socket.userID,
         username: socket.username,

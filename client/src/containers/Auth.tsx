@@ -5,6 +5,7 @@ import { CONNECTED_USERS, SUBMIT_USERNAME } from "../store/types";
 import socket from "../socket";
 import { useSnackbar } from "react-simple-snackbar";
 import { connected } from "process";
+import { Socket } from "dgram";
 
 const Auth = () => {
   const dispatch = useDispatch();
@@ -21,12 +22,13 @@ const Auth = () => {
     !username
       ? openSnackbar("Dude, we'll need a name to address you")
       : dispatch({ type: SUBMIT_USERNAME });
+    
     socket.auth = { username };
     socket.connect();
     return;
   };
 
-  const checkIfUserPersists = () => {
+  const checkIfUserPersists = (socket) => {
     const sessionID = localStorage.getItem("sessionID");
     if (sessionID) {
       dispatch({ type: SUBMIT_USERNAME });
@@ -36,7 +38,7 @@ const Auth = () => {
   };
 
   useEffect(() => {
-    checkIfUserPersists();
+    checkIfUserPersists(socket);
   }, []);
 
   return (

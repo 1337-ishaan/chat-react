@@ -8,7 +8,7 @@ import Chat from "./containers/Chat";
 import socket from "./socket";
 
 const App = () => {
-  const { usernameSelected } = useSelector(
+  const { username, usernameSelected } = useSelector(
     (state: any) => state.setUsernameReducer
   );
   const [connectedUsersList, setConnectedUsersList]: any = useState([]);
@@ -21,6 +21,7 @@ const App = () => {
   };
 
   console.log(connectedUsersList, "cuulist");
+
   const isUserConnected = () => {
     socket.on("disconnect", () => {
       connectedUsersList.forEach((user: any) => {
@@ -30,19 +31,30 @@ const App = () => {
       });
     });
   };
+
+  const isUserDisconnected = () => {
+    socket.on("connect", () => {
+      connectedUsersList.forEach((user: any) => {
+        if (user.self) {
+          user.connected = true;
+        }
+      });
+    });
+  };
   console.log(socket, "socket");
   // storing connected users
   const setConnectedUsers = () => {
     socket.on("users", (users) => {
+      let localID = localStorage.getItem("sessionID");
+      users.forEach((user: any) => {
+        user.self = user.userID === localID; // if the user is the authenticated user
+        initReactiveProperties(user);
+      });
       users = users.sort((a: any, b: any) => {
         if (a.self) return -1;
         if (b.self) return 1;
         if (a.username < b.username) return -1;
         return a.username > b.username ? 1 : 0;
-      });
-      users.forEach((user: any) => {
-        user.self = user.userID === socket.id; // if the user is the authenticated user
-        initReactiveProperties(user);
       });
     });
   };
@@ -63,12 +75,12 @@ const App = () => {
 
   // persisting the user
   const persistUser = (socket: ISocket) => {
+    console.log(username);
     socket.on("session", ({ sessionID, userID, username }) => {
       socket.auth = { sessionID, username }; //storing the sessionID and username in socket
-      !(connectedUsersList.length > 0)
-        ? localStorage.setItem("sessionID", sessionID)
-        : localStorage.removeItem("sessionID"); //store the sessionID in localStorage
-      socket.userID = userID; // also store the userID in socket
+     !(connectedUsersList.length > 0) &&
+        (localStorage.setItem("sessionID", sessionID),
+        (socket.userID = userID));
     });
   };
 
@@ -80,6 +92,8 @@ const App = () => {
 
   useEffect(() => {
     isUserConnected();
+    isUserDisconnected();
+
     // cleaning up equivalent to componentDidUnmount
     () => (
       socket.off("connect"),
