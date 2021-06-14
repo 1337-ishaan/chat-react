@@ -50,6 +50,20 @@ io.use((socket: any, next: any) => {
   socket.username = username;
   next();
 });
+const removeUser = (userList: any, userID: any) => {
+  for (let i in userList) {
+    if (userList[i].userID == userID) {
+      userList.splice(i, 1);
+    }
+    console.log(userID, "username");
+  }
+
+  io.emit("users after disconnection", userList);
+  io.emit("users", userList);
+
+  console.log(userList, "ikk");
+  return userList;
+};
 
 io.sockets.on("connection", (socket: any) => {
   // persist session
@@ -69,7 +83,7 @@ io.sockets.on("connection", (socket: any) => {
   socket.join(socket.userID);
 
   // fetch existing users
-  const users: any = [];
+  var users: any = [];
   const messagesPerUser = new Map();
   findMessageForUser(socket.userID).forEach((message: any) => {
     const { from, to } = message;
@@ -90,6 +104,16 @@ io.sockets.on("connection", (socket: any) => {
   socket.emit("users", users);
 
   // notify existing users
+  // socket.on("user disconnected", (id: number) => {
+  //   for (let i = 0; i < users.length; i++) {
+  //     const user = users[i];
+  //     if (user.userID === id) {
+  //       user.connected = false;
+  //       break;
+  //     }
+  //   }
+  // });
+
   socket.broadcast.emit("user connected", {
     userID: socket.userID,
     username: socket.username,

@@ -8,16 +8,16 @@ import Chat from "./containers/Chat";
 import socket from "./socket";
 
 const App = () => {
-  const { username, usernameSelected } = useSelector(
+  const { usernameSelected } = useSelector(
     (state: any) => state.setUsernameReducer
   );
   const [connectedUsersList, setConnectedUsersList]: any = useState([]);
   const initReactiveProperties = (user: any) => {
     //TODO: change 'any' to customized interface
-    user.connected = true;
+    user.connected = user.connected ? true : false;
     user.messages = [];
     user.hasNewMessages = false;
-    setConnectedUsersList((prevUsers: any) => [...prevUsers, user]); //setting the connected users in state
+    user.connected && setConnectedUsersList((prevUsers: any) => [...prevUsers, user]); //setting the connected users in state
   };
 
   console.log(connectedUsersList, "cuulist");
@@ -41,7 +41,7 @@ const App = () => {
       });
     });
   };
-  console.log(socket, "socket");
+  console.log(socket, "SOCKET");
   // storing connected users
   const setConnectedUsers = () => {
     socket.on("users", (users) => {
@@ -50,7 +50,7 @@ const App = () => {
         user.self = user.userID === localID; // if the user is the authenticated user
         initReactiveProperties(user);
       });
-      users = users.sort((a: any, b: any) => {
+      users.sort((a: any, b: any) => {
         if (a.self) return -1;
         if (b.self) return 1;
         if (a.username < b.username) return -1;
@@ -75,15 +75,27 @@ const App = () => {
 
   // persisting the user
   const persistUser = (socket: ISocket) => {
-    console.log(username);
     socket.on("session", ({ sessionID, userID, username }) => {
       socket.auth = { sessionID, username }; //storing the sessionID and username in socket
-     !(connectedUsersList.length > 0) &&
+      !(connectedUsersList.length > 0) &&
         (localStorage.setItem("sessionID", sessionID),
         (socket.userID = userID));
     });
   };
 
+  const setUsersAfterDisconnection = () => {
+    socket.on("user disconnected", (id: any) => {
+      for (let i = 0; i < connectedUsersList.length; i++) {
+        const user = connectedUsersList[i];
+        console.log(user);
+        if (user.userID === id) {
+          user.connected = false;
+          console.log(connectedUsersList, user, "user and connectedUsersList");
+          break;
+        }
+      }
+    });
+  };
   useEffect(() => {
     setConnectedUsers();
     storeNewUser();
@@ -91,18 +103,10 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    isUserConnected();
-    isUserDisconnected();
-
+    // isUserConnected();
+    // isUserDisconnected();
+    setUsersAfterDisconnection(); // setting users after
     // cleaning up equivalent to componentDidUnmount
-    () => (
-      socket.off("connect"),
-      socket.off("disconnect"),
-      socket.off("users"),
-      socket.off("user connected"),
-      socket.off("user disconnected"),
-      socket.off("private message")
-    );
   });
 
   return (
@@ -110,7 +114,7 @@ const App = () => {
       {usernameSelected ? (
         <Chat connectedUsersList={connectedUsersList} />
       ) : (
-        <Auth />
+        <Auth connectedUsersList={connectedUsersList} />
       )}
     </SnackbarProvider>
   );

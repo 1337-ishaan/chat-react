@@ -7,11 +7,12 @@ import { useSnackbar } from "react-simple-snackbar";
 import { connected } from "process";
 import { Socket } from "dgram";
 
-const Auth = () => {
+const Auth = ({ connectedUsersList }: any) => {
   const dispatch = useDispatch();
   const snackbarOptions = {
     position: "top-right",
   };
+  console.log(connectedUsersList, "AUTH");
   const [openSnackbar, closeSnackbar] = useSnackbar(snackbarOptions);
   const { username, usernameSelected, usersList } = useSelector(
     (state: any) => state.setUsernameReducer
@@ -19,11 +20,18 @@ const Auth = () => {
 
   const submitUsername = (event: React.FormEvent) => {
     event.preventDefault(); // prevents reloading of page onSubmit & onClick
+    for (let key in connectedUsersList) {
+      if (connectedUsersList[key].username.includes(username)) {
+        openSnackbar("Please select a different username");
+      }
+      return;
+    }
     !username
       ? openSnackbar("Dude, we'll need a name to address you")
       : dispatch({ type: SUBMIT_USERNAME });
-    
+
     socket.auth = { username };
+
     socket.connect();
     return;
   };

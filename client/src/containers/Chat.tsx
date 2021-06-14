@@ -10,15 +10,19 @@ const Chat = (props: any) => {
   const { connectedUsersList } = props;
   const dispatch = useDispatch();
 
-  const { selectedUserToChat, usersList } = useSelector(
+  const { selectedUserToChat } = useSelector(
     (state: any) => state.setUsernameReducer
   );
 
   // logout function
   const logoutFunction = () => {
     localStorage.removeItem("sessionID");
-    dispatch({ type: LOGOUT_USER });
+    // socket.emit("disconnect"); // logout user
     socket.disconnect();
+    dispatch({ type: LOGOUT_USER });
+    // socket.on("disconnection", (users: any) => {
+    //   console.log(users, "users after disconnection");
+    // });
   };
 
   useEffect(() => {

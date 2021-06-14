@@ -21,7 +21,7 @@ export const setUsernameReducer = (state = globalStore, action: any) => {
     case SELECT_USER:
       return { ...state, selectedUserToChat: action.payload };
     case LOGOUT_USER:
-      return { ...state, usernameSelected: false };
+      return { ...state, username: null, usernameSelected: false };
 
     default:
       return state;
