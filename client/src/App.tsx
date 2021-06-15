@@ -94,7 +94,8 @@ const App = () => {
           break;
         }
       }
-    });
+      setConnectedUsersList((prevUsers: any) => [...prevUsers, connectedUsersList]);    }
+    );
   };
   useEffect(() => {
     setConnectedUsers();
@@ -104,7 +105,7 @@ const App = () => {
 
   useEffect(() => {
     // isUserConnected();
-    // isUserDisconnected();
+    isUserDisconnected();
     setUsersAfterDisconnection(); // setting users after
     // cleaning up equivalent to componentDidUnmount
   });

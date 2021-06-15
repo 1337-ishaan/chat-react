@@ -4,7 +4,6 @@ import { CONNECTED_USERS, SELECT_USER } from "../store/types";
 
 const RenderConnectedUsers = ({ connectedUsersList }: any) => {
   const dispatch = useDispatch();
-  const { username } = useSelector((state: any) => state.setUsernameReducer);
   return (
     <div className="pl-5 ">
       <div className="text-4xl my-6 font-extrabold text-white tracking-widest">
