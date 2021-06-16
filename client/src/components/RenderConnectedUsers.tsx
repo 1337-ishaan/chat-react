@@ -4,6 +4,7 @@ import { CONNECTED_USERS, SELECT_USER } from "../store/types";
 
 const RenderConnectedUsers = ({ connectedUsersList }: any) => {
   const dispatch = useDispatch();
+
   return (
     <div className="pl-5 ">
       <div className="text-4xl my-6 font-extrabold text-white tracking-widest">

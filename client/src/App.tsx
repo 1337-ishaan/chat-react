@@ -61,8 +61,8 @@ const App = () => {
 
   // after new user connects, store it in an array
   const storeNewUser = () => {
-    // !localStorage.getItem("sessionID") &&
-      socket.on("user connected", (user) => {
+    !localStorage.getItem("sessionID") &&
+      socket.once("user connected", (user) => {
         initReactiveProperties(user);
       });
   };
@@ -94,8 +94,7 @@ const App = () => {
           break;
         }
       }
-      setConnectedUsersList(connectedUsersList);
-      }
+      setConnectedUsersList((prevUsers: any) => [...prevUsers, connectedUsersList]);    }
     );
   };
   useEffect(() => {
@@ -103,11 +102,11 @@ const App = () => {
     storeNewUser();
     persistUser(socket);
   }, []);
-  
+
   useEffect(() => {
-    setUsersAfterDisconnection(); // setting users after
     // isUserConnected();
-    // isUserDisconnected();
+    isUserDisconnected();
+    setUsersAfterDisconnection(); // setting users after
     // cleaning up equivalent to componentDidUnmount
   });
 

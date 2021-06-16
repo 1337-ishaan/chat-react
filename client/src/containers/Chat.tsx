@@ -31,6 +31,7 @@ const Chat = (props: any) => {
       err.message === "Invalid Username" &&
         dispatch({ type: AUTH_ERROR_SOCKET });
     });
+    // window.location.reload();
   }, []);
 
   return (

@@ -13,10 +13,8 @@ const Auth = ({ connectedUsersList }: any) => {
     position: "top-right",
   };
   console.log(connectedUsersList, "AUTH");
-  const [openSnackbar, closeSnackbar] = useSnackbar(snackbarOptions);
-  const { username, usernameSelected, usersList } = useSelector(
-    (state: any) => state.setUsernameReducer
-  );
+  const [openSnackbar] = useSnackbar(snackbarOptions);
+  const { username } = useSelector((state: any) => state.setUsernameReducer);
 
   const submitUsername = (event: React.FormEvent) => {
     event.preventDefault(); // prevents reloading of page onSubmit & onClick
@@ -24,14 +22,12 @@ const Auth = ({ connectedUsersList }: any) => {
       if (connectedUsersList[key].username.includes(username)) {
         openSnackbar("Please select a different username");
       }
-      return;
     }
     !username
       ? openSnackbar("Dude, we'll need a name to address you")
       : dispatch({ type: SUBMIT_USERNAME });
 
     socket.auth = { username };
-
     socket.connect();
     return;
   };

@@ -50,20 +50,7 @@ io.use((socket: any, next: any) => {
   socket.username = username;
   next();
 });
-const removeUser = (userList: any, userID: any) => {
-  for (let i in userList) {
-    if (userList[i].userID == userID) {
-      userList.splice(i, 1);
-    }
-    console.log(userID, "username");
-  }
 
-  io.emit("users after disconnection", userList);
-  io.emit("users", userList);
-
-  console.log(userList, "ikk");
-  return userList;
-};
 
 io.sockets.on("connection", (socket: any) => {
   // persist session
@@ -103,17 +90,6 @@ io.sockets.on("connection", (socket: any) => {
   });
   socket.emit("users", users);
 
-  // notify existing users
-  // socket.on("user disconnected", (id: number) => {
-  //   for (let i = 0; i < users.length; i++) {
-  //     const user = users[i];
-  //     if (user.userID === id) {
-  //       user.connected = false;
-  //       break;
-  //     }
-  //   }
-  // });
-
   socket.broadcast.emit("user connected", {
     userID: socket.userID,
     username: socket.username,
@@ -134,8 +110,8 @@ io.sockets.on("connection", (socket: any) => {
     const matchingSockets = await io.in(socket.userID).allSockets();
     const isDisconnected = matchingSockets.size === 0;
     if (isDisconnected) {
-      // notify other users
-      socket.broadcast.emit("user disconnected", socket.userID);
+      // notify other user
+      io.sockets.emit("user disconnected", socket.userID);
       // update the connection status of the session
       saveSession(socket.sessionID, {
         userID: socket.userID,
